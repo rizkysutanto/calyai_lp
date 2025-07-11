@@ -2,9 +2,6 @@
   "name": "calyai-landing-page",
   "version": "1.0.0",
   "scripts": {
-    "start": "npx serve -s . -p $PORT --host 0.0.0.0"
-  },
-  "dependencies": {
-    "serve": "^14.0.0"
+    "start": "node server.js"
   }
 }
