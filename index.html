@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalyAI - Your Personal Assistant for Scheduling</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4285f4;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo::before {
+            content: "📅";
+            margin-right: 8px;
+        }
+
+        .cta-button {
+            background: #4285f4;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            background: #3367d6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 120px 0 80px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
+            opacity: 0.1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+            gap: 10px;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .hero-form input {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .hero-form button {
+            padding: 15px 30px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .hero-form button:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+
+        /* Phone Mockup */
+        .phone-section {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+
+        .phone-container {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .phone-mockup {
+            flex: 1;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .phone-frame {
+            width: 300px;
+            height: 600px;
+            background: #1a1a1a;
+            border-radius: 30px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-bubble {
+            background: #4285f4;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin: 10px 0;
+            max-width: 80%;
+            font-size: 14px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .chat-bubble.user {
+            background: #e3f2fd;
+            color: #333;
+            margin-left: auto;
+        }
+
+        .features-content {
+            flex: 1;
+        }
+
+        .features-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        /* Blue Section */
+        .blue-section {
+            background: linear-gradient(135deg, #4285f4 0%, #1976d2 100%);
+            padding: 80px 0;
+            text-align: center;
+            color: white;
+        }
+
+        .blue-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .blue-section p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .demo-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .task-reminder-section {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            padding: 80px 0;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .task-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .task-phone {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Schedule Section */
+        .schedule-section {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+
+        .schedule-container {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .schedule-content {
+            flex: 1;
+        }
+
+        .schedule-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .schedule-devices {
+            flex: 1;
+            position: relative;
+        }
+
+        .device-mockup {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        /* Final CTA */
+        .final-cta {
+            background: linear-gradient(135deg, #4285f4 0%, #1976d2 100%);
+            padding: 80px 0;
+            text-align: center;
+            color: white;
+        }
+
+        .final-cta h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .final-cta p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+        }
+
+        .final-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+            gap: 15px;
+        }
+
+        .final-form input {
+            flex: 1;
+            padding: 18px 25px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .final-form button {
+            padding: 18px 35px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .final-form button:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.1rem; }
+            .hero-form { flex-direction: column; }
+            .phone-container, .task-reminder-section, .schedule-container { flex-direction: column; }
+            .final-form { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">CalyAI</div>
+                <a href="#" class="cta-button">Get Early Access</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>CalyAI Your Personal Assistant for Scheduling</h1>
+                <p>Tired of scheduling your meetings, reminders, & task? CalyAI takes care of that for you, just one chat away</p>
+                <div class="hero-form">
+                    <input type="email" placeholder="Your email here">
+                    <button>Submit</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="phone-section">
+        <div class="container">
+            <div class="phone-container">
+                <div class="phone-mockup">
+                    <div class="phone-frame">
+                        <div class="phone-screen">
+                            <div class="chat-bubble user">Need I set today your Schedule in Brisbane. Good luck in Interview!</div>
+                            <div class="chat-bubble">When can you get there?</div>
+                            <div class="chat-bubble user">It's added to your calendar. 
+                            🗓️ Finance Meeting time: 
+                            Date: Monday, 23 Jul
+                            Time: 10:00 AM
+                            Duration: 1 hour</div>
+                            <div class="chat-bubble">Cancel or Edit from Chat & SMS 📱 Flight 🛫 Gym 🏃 Fuel</div>
+                            <div class="chat-bubble user">Schedule: Grocery Date Monday, 23 Jul 5:00 PM Time: 🛒 Grocery Time 🛒 Taxi 🚕 Fuel</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="features-content">
+                    <h2>See CalyAI in Action!</h2>
+                    <p>Your AI Personal Assistant is one chat away!</p>
+                    <div class="feature-item">
+                        <div class="feature-icon">🤖</div>
+                        <div>
+                            <h3>Smart Scheduling</h3>
+                            <p>AI-powered scheduling that learns your preferences</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📱</div>
+                        <div>
+                            <h3>Chat Interface</h3>
+                            <p>Natural conversation-based scheduling</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⚡</div>
+                        <div>
+                            <h3>Instant Updates</h3>
+                            <p>Real-time calendar synchronization</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="blue-section">
+        <div class="container">
+            <div class="task-reminder-section">
+                <div class="task-phone">
+                    <div class="device-mockup">
+                        <h3>📱 Mobile App</h3>
+                        <p>Add to Calendar</p>
+                        <p>It's added to your calendar
+                        🗓️ Flight: Houston (HOU) to
+                        🗓️ Finance Meeting
+                        🗓️ Date: Monday, Jan 23
+                        🗓️ Time: 10:00 AM
+                        🗓️ Duration: 1 hour</p>
+                    </div>
+                </div>
+                <div class="task-content">
+                    <h2>Task Reminders</h2>
+                    <p>CalyAI assists you no matter what you need from grocery shopping, taking medicine, or going to gym.</p>
+                    <a href="#" class="cta-button">Get Early Access</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="schedule-section">
+        <div class="container">
+            <div class="schedule-container">
+                <div class="schedule-content">
+                    <h2>Schedules, Invite, & Recap</h2>
+                    <p>Whether it's scheduling personal task, meeting with your team, rescheduling schedule for your family get it sorted!</p>
+                    <a href="#" class="cta-button">Get Early Access</a>
+                </div>
+                <div class="schedule-devices">
+                    <div class="device-mockup">
+                        <h3>💻 Desktop Notifications</h3>
+                        <p>🗓️ 1 on 1 with Alex Today at 10:00 AM</p>
+                        <p>🎯 Pilates Class Today at 7:00 PM</p>
+                    </div>
+                    <div class="device-mockup">
+                        <h3>📱 Mobile Sync</h3>
+                        <p>All your schedules synced across devices</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="final-cta">
+        <div class="container">
+            <h2>Get Your Early Access!</h2>
+            <p>Experience CalyAI Your AI Personal Assistant, Just One Chat Away!</p>
+            <div class="final-form">
+                <input type="email" placeholder="Your email here">
+                <button>Submit</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add scroll effect to header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.backdropFilter = 'blur(10px)';
+            } else {
+                header.style.background = 'white';
+                header.style.backdropFilter = 'none';
+            }
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-item, .device-mockup').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Form submission handling
+        document.querySelectorAll('form, .hero-form, .final-form').forEach(form => {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const button = form.querySelector('button');
+                const originalText = button.textContent;
+                button.textContent = 'Thank you!';
+                button.style.background = '#4caf50';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
