@@ -1,10 +1,37 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
+const { Pool } = require('pg');
 
 const PORT = process.env.PORT || 8080;
 
-const server = http.createServer((req, res) => {
+// Database connection
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
+
+// Create emails table if it doesn't exist
+async function initializeDatabase() {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS emails (
+                id SERIAL PRIMARY KEY,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        console.log('Database initialized successfully');
+    } catch (error) {
+        console.error('Error initializing database:', error);
+    }
+}
+
+// Initialize database on startup
+initializeDatabase();
+
+const server = http.createServer(async (req, res) => {
     // Handle CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -17,7 +44,48 @@ const server = http.createServer((req, res) => {
         return;
     }
     
-    let filePath = path.join(__dirname, req.url === '/' ? 'index.html' : req.url);
+    const parsedUrl = url.parse(req.url, true);
+    const pathname = parsedUrl.pathname;
+    
+    // Handle email submission
+    if (req.method === 'POST' && pathname === '/submit-email') {
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        
+        req.on('end', async () => {
+            try {
+                const data = JSON.parse(body);
+                const email = data.email;
+                
+                // Validate email
+                if (!email || !email.includes('@')) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ success: false, message: 'Invalid email address' }));
+                    return;
+                }
+                
+                // Insert email into database
+                await pool.query(
+                    'INSERT INTO emails (email) VALUES ($1) ON CONFLICT (email) DO NOTHING',
+                    [email]
+                );
+                
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true, message: 'Email saved successfully!' }));
+                
+            } catch (error) {
+                console.error('Error saving email:', error);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'Error saving email' }));
+            }
+        });
+        return;
+    }
+    
+    // Serve static files
+    let filePath = path.join(__dirname, pathname === '/' ? 'index.html' : pathname);
     
     // Get file extension
     const extname = path.extname(filePath).toLowerCase();
