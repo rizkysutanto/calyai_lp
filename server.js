@@ -31,11 +31,57 @@ async function initializeDatabase() {
 // Initialize database on startup
 initializeDatabase();
 
+// Function to serve video files with range support
+function serveVideo(filePath, req, res) {
+    fs.stat(filePath, (err, stats) => {
+        if (err) {
+            res.writeHead(404);
+            res.end('Video not found');
+            return;
+        }
+
+        const range = req.headers.range;
+        const fileSize = stats.size;
+
+        if (range) {
+            // Parse Range header
+            const parts = range.replace(/bytes=/, "").split("-");
+            const start = parseInt(parts[0], 10);
+            const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+            const chunkSize = (end - start) + 1;
+
+            // Create read stream for the requested range
+            const file = fs.createReadStream(filePath, { start, end });
+
+            // Set headers for partial content
+            res.writeHead(206, {
+                'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                'Accept-Ranges': 'bytes',
+                'Content-Length': chunkSize,
+                'Content-Type': 'video/mp4',
+                'Cache-Control': 'no-cache'
+            });
+
+            file.pipe(res);
+        } else {
+            // Serve entire file
+            res.writeHead(200, {
+                'Content-Length': fileSize,
+                'Content-Type': 'video/mp4',
+                'Accept-Ranges': 'bytes',
+                'Cache-Control': 'no-cache'
+            });
+
+            fs.createReadStream(filePath).pipe(res);
+        }
+    });
+}
+
 const server = http.createServer(async (req, res) => {
     // Handle CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Range');
     
     // Handle preflight requests
     if (req.method === 'OPTIONS') {
@@ -90,6 +136,12 @@ const server = http.createServer(async (req, res) => {
     // Get file extension
     const extname = path.extname(filePath).toLowerCase();
     
+    // Special handling for video files
+    if (extname === '.mp4') {
+        serveVideo(filePath, req, res);
+        return;
+    }
+    
     // Set content type based on file extension
     const mimeTypes = {
         '.html': 'text/html',
@@ -105,8 +157,7 @@ const server = http.createServer(async (req, res) => {
         '.woff': 'font/woff',
         '.woff2': 'font/woff2',
         '.ttf': 'font/ttf',
-        '.eot': 'application/vnd.ms-fontobject',
-        '.mp4': 'video/mp4'  // Added MP4 support
+        '.eot': 'application/vnd.ms-fontobject'
     };
     
     const contentType = mimeTypes[extname] || 'application/octet-stream';
