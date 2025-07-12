@@ -186,6 +186,10 @@
         .hero-right {
             flex: 1;
             display: flex;
+             width: 380px !important;
+            height: 684px !important;
+            object-fit: cover; /* This ensures the video fills the container properly */
+            background: none !important; /* Remove any background styling */
             justify-content: center;
             align-items: flex-end;
         }
@@ -631,11 +635,11 @@
                 </div>
             </div>
             <div class="hero-right">
-                <video width="100%" autoplay muted loop playsinline>
-  <source src="images/calyai-demo.mp4" type="video/mp4">
-  Your browser doesn't support video.
-</video>
-            </div>
+    <video width="380" height="684" autoplay muted loop playsinline webkit-playsinline>
+        <source src="images/calyai-demo.mp4" type="video/mp4">
+        Your browser doesn't support video.
+    </video>
+</div>
         </div>
     </section>
 
