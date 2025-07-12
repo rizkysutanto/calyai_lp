@@ -105,7 +105,8 @@ const server = http.createServer(async (req, res) => {
         '.woff': 'font/woff',
         '.woff2': 'font/woff2',
         '.ttf': 'font/ttf',
-        '.eot': 'application/vnd.ms-fontobject'
+        '.eot': 'application/vnd.ms-fontobject',
+        '.mp4': 'video/mp4'  // Added MP4 support
     };
     
     const contentType = mimeTypes[extname] || 'application/octet-stream';
@@ -139,15 +140,3 @@ server.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`Server accessible at http://0.0.0.0:${PORT}`);
 });
-
-const express = require('express');
-const app = express();
-
-// Serve static files with correct MIME types
-app.use(express.static('public', {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.mp4')) {
-      res.setHeader('Content-Type', 'video/mp4');
-    }
-  }
-}));
