@@ -271,12 +271,21 @@
             align-items: center;
         }
 
-        .task-image {
+        .task-video {
             width: 600px;
             height: 600px;
             max-width: 600px;
-            background: url('https://placehold.co/600x600') no-repeat center;
-            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .task-video video {
+            width: 100%;
+            max-width: 380px;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         .task-text {
@@ -407,12 +416,21 @@
             box-shadow: 0 5px 15px rgba(39, 119, 240, 0.4);
         }
 
-        .schedules-image {
+        .schedules-video {
             width: 600px;
             height: 600px;
             max-width: 600px;
-            background: url('https://placehold.co/600x600') no-repeat center;
-            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .schedules-video video {
+            width: 100%;
+            max-width: 380px;
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         /* Final CTA Section */
@@ -594,9 +612,14 @@
                 padding: 0;
             }
             
-            .task-image, .schedules-image {
+            .task-video, .schedules-video {
                 width: 100%;
                 max-width: 400px;
+            }
+            
+            .task-video video, .schedules-video video {
+                max-width: 100%;
+                width: 300px;
             }
             
             .blue-title, .final-title {
@@ -663,7 +686,12 @@
     <!-- Task Reminders Section -->
     <section class="task-section">
         <div class="task-content">
-            <div class="task-image"></div>
+            <div class="task-video">
+                <video autoplay muted loop playsinline webkit-playsinline preload="auto">
+                    <source src="images/calyai-video.mp4" type="video/mp4">
+                    Your browser doesn't support video.
+                </video>
+            </div>
             <div class="task-text">
                 <div class="task-info">
                     <h2 class="task-title">Task Reminders</h2>
@@ -684,7 +712,12 @@
                 </div>
                 <a href="#final-cta" class="schedules-button">Get Early Access</a>
             </div>
-            <div class="schedules-image"></div>
+            <div class="schedules-video">
+                <video autoplay muted loop playsinline webkit-playsinline preload="auto">
+                    <source src="images/calyai-task.mp4" type="video/mp4">
+                    Your browser doesn't support video.
+                </video>
+            </div>
         </div>
     </section>
 
