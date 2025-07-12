@@ -69,6 +69,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            white-space: nowrap;
         }
 
         .cta-button:hover {
@@ -562,13 +563,28 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .header-content {
-                flex-direction: column;
+                /* Keep header items side by side on mobile */
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
                 gap: 10px;
+                padding: 8px 15px;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 80px;
+            }
+            
+            .cta-button {
+                font-size: 12px;
+                padding: 8px 12px;
+                min-height: 36px;
             }
             
             .hero {
                 min-height: auto;
-                padding-top: 160px;
+                padding-top: 100px;
             }
             
             .hero-content {
@@ -689,7 +705,7 @@
                 <!-- Demo content will go here -->
            <!-- </div>
         </div>
-    </section> 
+    </section> -->
 
     <!-- Task Reminders Section -->
     <section class="task-section">
