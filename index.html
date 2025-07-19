@@ -597,6 +597,55 @@
             transform: none;
         }
 
+        /* Footer Styles */
+.footer {
+    width: 100%;
+    background: #2777F0;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-content {
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.footer-text {
+    color: white;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    margin: 0;
+}
+
+.footer-link {
+    color: white;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.footer-link:hover {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+}
+
+/* Responsive Footer */
+@media (max-width: 768px) {
+    .footer {
+        padding: 15px 0;
+    }
+    
+    .footer-text {
+        font-size: 14px;
+        line-height: 20px;
+    }
+}
+
         /* Success/Error Messages */
         .message {
             margin-top: 15px;
@@ -826,6 +875,13 @@
             </div>
         </div>
     </section>
+
+    <!-- Footer Section -->
+<footer class="footer">
+    <div class="footer-content">
+        <p class="footer-text">Built Solo 0 to 1 by <a href="https://www.linkedin.com/in/rizky-sutanto/" target="_blank" class="footer-link">Rizky Sutanto</a></p>
+    </div>
+</footer>
 
     <script>
         // Email submission function
